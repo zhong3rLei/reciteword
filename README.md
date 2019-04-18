@@ -1,29 +1,20 @@
 # recite word
 
-## Project setup
+## 安装依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
+### 先将vue项目编译打包到dist文件夹，electron主进程内部启动的服务设置为指定的是dist目录
 ```
 npm run build
 ```
 
-### Run your tests
+### 启动运行electron
 ```
-npm run test
+npm run start
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

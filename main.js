@@ -22,8 +22,8 @@ function createWindow() {
     height
   } = electron.screen.getPrimaryDisplay().workAreaSize
   mainWindow = new BrowserWindow({
-    width: width,
-    height: height,
+    width: width < 1440 ? width : 1440,
+    height: height < 900 ? height : 900,
     webPreferences: {
       nodeIntegration: true
     }

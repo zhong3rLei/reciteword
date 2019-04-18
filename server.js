@@ -526,6 +526,7 @@ module.exports = function (electron) {
                     _letterWritten.testcount = _letterList.testcount;
 
                     fs.writeFileSync(baseurl + "lesson/" + chapterName + "/" + _newLesson + ".json", JSON.stringify(_letterWritten));
+                    computeWeight();
                     res.send({
                         state: true,
                         msg: "测验完成",
@@ -588,9 +589,9 @@ module.exports = function (electron) {
     function computeWeight() {
         //配置权重系数，测试中的成绩权重设置为5
         var weightConfig = {
-            mistakecount: 5,
+            mistakecount: 19,
             overturn: 1,
-            total: 6
+            total: 20
         }
         var mainConf = JSON.parse(fs.readFileSync(baseurl + "lesson/config.json").toString());
         var chapterDir = mainConf.config.dir;

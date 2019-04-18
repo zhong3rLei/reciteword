@@ -142,6 +142,7 @@ export default {
     timmer = setInterval(_vm.weightCommit, 20000)
   },
   destroyed () {
+    this.weightCommit()
     clearInterval(timmer);
   }
 };
