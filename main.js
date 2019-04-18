@@ -1,6 +1,12 @@
 // Modules to control application life and create native browser window
 const electron = require('electron')
-const { app, BrowserWindow } = electron
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  MenuItem,
+  ipcMain
+} = electron
 
 var server = require("./server.js")
 server(electron)
@@ -9,9 +15,12 @@ server(electron)
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize
+  const {
+    width,
+    height
+  } = electron.screen.getPrimaryDisplay().workAreaSize
   mainWindow = new BrowserWindow({
     width: width,
     height: height,
@@ -20,11 +29,12 @@ function createWindow () {
     }
   })
 
+
+  
+
   // and load the index.html of the app.
   mainWindow.loadURL('http://localhost:8081')
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-
+  
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -33,6 +43,26 @@ function createWindow () {
     mainWindow = null
   })
 }
+
+const menu = new Menu()
+menu.append(new MenuItem({
+  label: 'dev tool',
+  click: () => {
+    if (mainWindow) {
+      mainWindow.webContents.openDevTools()
+    }
+  }
+}))
+app.on('browser-window-created', function (event, win) {
+  win.webContents.on('context-menu', function (e, params) {
+    menu.popup(win, params.x, params.y)
+  })
+})
+
+ipcMain.on('show-context-menu', function (event) {
+  const win = BrowserWindow.fromWebContents(event.sender)
+  menu.popup(win)
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
