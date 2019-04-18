@@ -6,9 +6,9 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "electron .", 
-    "pack": "electron-builder --dir", 
-    "dist": "electron-builder" 
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "main": "main.js",
   "build": {
@@ -19,7 +19,7 @@
       "perMachine": true,
       "runAfterFinish": true
     },
-    "files": [ 
+    "files": [
       "dist/css",
       "dist/img",
       "dist/js",

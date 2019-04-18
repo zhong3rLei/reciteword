@@ -11,7 +11,7 @@ module.exports = function (electron) {
     //  主页输出 "Hello World"
     app.get('/', function (req, res) {
         console.log("主页 GET 请求");
-        fs.readFile(baseurl + 'views/index.html', function (err, data) {
+        fs.readFile(baseurl + 'dist/index.html', function (err, data) {
             res.writeHead(200, {
                 'Content-Type': 'text/html'
             });
