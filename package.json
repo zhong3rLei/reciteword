@@ -1,10 +1,31 @@
 {
-  "name": "en_word",
+  "name": "recite_word",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "start": "electron .", 
+    "pack": "electron-builder --dir", 
+    "dist": "electron-builder" 
+  },
+  "main": "main.js",
+  "build": {
+    "appId": "stock.analysis",
+    "compression": "normal",
+    "nsis": {
+      "oneClick": true,
+      "perMachine": true,
+      "runAfterFinish": true
+    },
+    "files": [ 
+      "dist/css",
+      "dist/img",
+      "dist/js",
+      "dist/*.html",
+      "*.js"
+    ]
   },
   "dependencies": {
     "axios": "^0.18.0",

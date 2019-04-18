@@ -1,4 +1,4 @@
-# en_word
+# recite word
 
 ## Project setup
 ```
