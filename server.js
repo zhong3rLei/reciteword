@@ -675,6 +675,21 @@ module.exports = function (electron) {
         }
         return name;
     }
+    //用一个数列算法估计复习的时间曲线
+    function reviewTime (createTime,n) {
+        var a = 0;
+        var arr = [0,1,2];
+        var result = 0;
+        if (n < 4) {
+            return arr[n-1]
+        }
+        while (n > 3) {
+            a = arr[arr.length - 1] + arr[arr.length - 2];
+            arr.push(a);
+            n--
+        }
+        return createTime + a*1000*60*60*24;
+    }
 
     var server = app.listen(8081, function () {
 
