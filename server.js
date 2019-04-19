@@ -599,6 +599,13 @@ module.exports = function (electron) {
         for (var i = 0; i < chapterDir.length; i++) {
             var chapterItem = JSON.parse(fs.readFileSync(baseurl + "lesson/" + chapterDir[i].name + "/chapterConfig.json").toString());
             var lessonDir = chapterItem.config.dir;
+            for (var x = 0; x < chapterItem.config.dir.length; x++) {
+                var _rvTime = reviewTime(chapterItem.config.dir[x].createtime,chapterItem.config.dir[x].reviewcount);
+                if (parseInt(_rvTime/1000*60*60*24) < parseInt(chapterItem.config.dir[x].createtime/1000*60*60*24)) {
+                    var _missday = parseInt(chapterItem.config.dir[x].createtime/1000*60*60*24) - parseInt(_rvTime/1000*60*60*24);
+                }
+            }
+            // fs.writeFileSync(baseurl + "lesson/" + chapterDir[i].name + "/chapterConfig.json", JSON.stringify(chapterItem));
             for (var j = 0; j < lessonDir.length; j++) {
                 var letter = JSON.parse(fs.readFileSync(baseurl + "lesson/" + chapterDir[i].name + "/" + lessonDir[j].name + ".json").toString());
                 var letterDir = letter.letter;
@@ -615,6 +622,7 @@ module.exports = function (electron) {
                     //逐个计算权重占比
                     letterDir[y].weightPercent = (letterDir[y].mistakecount * (weightConfig.mistakecount / weightConfig.total) + letterDir[y].overturn * (weightConfig.overturn / weightConfig.total)) / allweight;
                     weightPercentTotal += letterDir[y].weightPercent;
+                    letterDir[y]
                 }
                 letter.letter = letterDir;
                 letter.weightAverage = weightPercentTotal / letterDir.length; //赋权重平均值
