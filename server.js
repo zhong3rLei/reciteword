@@ -605,18 +605,24 @@ module.exports = function (electron) {
                     var _missday = parseInt(chapterItem.config.dir[x].createtime/1000*60*60*24) - parseInt(_rvTime/1000*60*60*24);
                 }
             }
-            // fs.writeFileSync(baseurl + "lesson/" + chapterDir[i].name + "/chapterConfig.json", JSON.stringify(chapterItem));
+            
             for (var j = 0; j < lessonDir.length; j++) {
                 var letter = JSON.parse(fs.readFileSync(baseurl + "lesson/" + chapterDir[i].name + "/" + lessonDir[j].name + ".json").toString());
                 var letterDir = letter.letter;
-                var allweight = 0;
+                var allweight = 0,totalscore = 0,misscore = 0;
                 for (var x = 0; x < letterDir.length; x++) {
                     //取全部权重总和
                     if (!letterDir[x].mistakecount) {
                         letterDir[x].mistakecount = 0;
                     }
                     allweight += letterDir[x].mistakecount * (weightConfig.mistakecount / weightConfig.total) + letterDir[x].overturn * (weightConfig.overturn / weightConfig.total);
+                    //取记录中全部的测试总分
+                    totalscore += letter.testcount;
+                    //取当前课节所有错误的分数
+                    misscore += letterDir[x].mistakecount;
                 }
+                //计算平均分,存到课节的config文件
+                lessonDir[j].averageScore = (1 - misscore/totalscore).toFixed(2);
                 var weightPercentTotal = 0;
                 for (var y = 0; y < letterDir.length; y++) {
                     //逐个计算权重占比
@@ -628,6 +634,8 @@ module.exports = function (electron) {
                 letter.weightAverage = weightPercentTotal / letterDir.length; //赋权重平均值
                 fs.writeFileSync(baseurl + "lesson/" + chapterDir[i].name + "/" + lessonDir[j].name + ".json", JSON.stringify(letter))
             }
+            chapterItem.config.dir = lessonDir;
+            fs.writeFileSync(baseurl + "lesson/" + chapterDir[i].name + "/chapterConfig.json", JSON.stringify(chapterItem));
         }
     }
 
