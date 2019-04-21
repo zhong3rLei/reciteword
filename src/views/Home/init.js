@@ -10,6 +10,8 @@ export default {
       
     },
     mounted () {
-      
+      this.axios.get('/api/getTodayList').then(res => {
+        console.log(res)
+      })
     }
   };

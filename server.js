@@ -6,7 +6,7 @@ module.exports = function (electron) {
     var querystring = require('querystring');
     var URL = require('url');
     // var _debugger = process.env.ELECTRON_ENABLE_LOGGING ?  false : true;
-    var baseurl = path.join(__dirname,'/');
+    var baseurl = path.join(__dirname, '/');
     app.use(express.static(baseurl + 'dist'));
     //  主页输出 "Hello World"
     app.get('/', function (req, res) {
@@ -224,7 +224,9 @@ module.exports = function (electron) {
             fs.readFile(baseurl + 'lesson/' + chapterName + '/' + dataObject.name + '.json', function (err, file) {
                 if (err) {
                     var _newLesson = {
-                        letter: []
+                        letter: [],
+                        testcount: 0,
+                        weightAverage: 0
                     }
                     fs.writeFile(baseurl + 'lesson/' + chapterName + '/' + dataObject.name + '.json', JSON.stringify(_newLesson), function (err) {
                         if (err) return console.log(err);
@@ -599,17 +601,10 @@ module.exports = function (electron) {
         for (var i = 0; i < chapterDir.length; i++) {
             var chapterItem = JSON.parse(fs.readFileSync(baseurl + "lesson/" + chapterDir[i].name + "/chapterConfig.json").toString());
             var lessonDir = chapterItem.config.dir;
-            for (var x = 0; x < chapterItem.config.dir.length; x++) {
-                var _rvTime = reviewTime(chapterItem.config.dir[x].createtime,chapterItem.config.dir[x].reviewcount);
-                if (parseInt(_rvTime/1000*60*60*24) < parseInt(chapterItem.config.dir[x].createtime/1000*60*60*24)) {
-                    var _missday = parseInt(chapterItem.config.dir[x].createtime/1000*60*60*24) - parseInt(_rvTime/1000*60*60*24);
-                }
-            }
-            
             for (var j = 0; j < lessonDir.length; j++) {
                 var letter = JSON.parse(fs.readFileSync(baseurl + "lesson/" + chapterDir[i].name + "/" + lessonDir[j].name + ".json").toString());
                 var letterDir = letter.letter;
-                var allweight = 0,totalscore = 0,misscore = 0;
+                var allweight = 0, totalscore = 0, misscore = 0;
                 for (var x = 0; x < letterDir.length; x++) {
                     //取全部权重总和
                     if (!letterDir[x].mistakecount) {
@@ -622,7 +617,7 @@ module.exports = function (electron) {
                     misscore += letterDir[x].mistakecount;
                 }
                 //计算平均分,存到课节的config文件
-                lessonDir[j].averageScore = (1 - misscore/totalscore).toFixed(2);
+                lessonDir[j].averageScore = totalscore ? (1 - misscore / totalscore).toFixed(2) : "0";
                 var weightPercentTotal = 0;
                 for (var y = 0; y < letterDir.length; y++) {
                     //逐个计算权重占比
@@ -635,6 +630,23 @@ module.exports = function (electron) {
                 fs.writeFileSync(baseurl + "lesson/" + chapterDir[i].name + "/" + lessonDir[j].name + ".json", JSON.stringify(letter))
             }
             chapterItem.config.dir = lessonDir;
+
+            //计算今日智能推荐复习计划列表
+            var _todayList = [];
+            for (var x = 0; x < chapterItem.config.dir.length; x++) {
+                var _rvTime = reviewTime(chapterItem.config.dir[x].createtime, chapterItem.config.dir[x].reviewcount);
+                console.log("----------------------------")
+                console.log(parseInt(_rvTime / (1000 * 60 * 60 * 24)))
+                console.log(parseInt(new Date().getTime() / (1000 * 60 * 60 * 24)))
+                console.log("----------------------------")
+                if (parseInt(_rvTime / (1000 * 60 * 60 * 24)) <= parseInt(new Date().getTime() / (1000 * 60 * 60 * 24))) {
+                    var _missday = parseInt(new Date().getTime() / (1000 * 60 * 60 * 24)) - parseInt(_rvTime / (1000 * 60 * 60 * 24));
+                    var _item = chapterItem.config.dir[x];
+                    _item.missday = _missday;
+                    _todayList.push(_item);
+                }
+            }
+            chapterItem.config.todaylist = _todayList;
             fs.writeFileSync(baseurl + "lesson/" + chapterDir[i].name + "/chapterConfig.json", JSON.stringify(chapterItem));
         }
     }
@@ -667,7 +679,7 @@ module.exports = function (electron) {
                     fs.writeFileSync(baseurl + "lesson/" + chapterName + "/" + _newLesson + ".json", JSON.stringify(_data));
                 })
                 computeWeight();
-                fs.writeFile(baseurl+"lesson/" + chapterName + "/chapterConfig.json", JSON.stringify(_data), function (err) {
+                fs.writeFile(baseurl + "lesson/" + chapterName + "/chapterConfig.json", JSON.stringify(_data), function (err) {
                     if (err) return console.log(err);
                     res.send({
                         msg: '修改完成',
@@ -692,27 +704,54 @@ module.exports = function (electron) {
         return name;
     }
     //用一个数列算法估计复习的时间曲线
-    function reviewTime (createTime,n) {
+    function reviewTime(createTime, n) {
         var a = 0;
-        var arr = [0,1,2];
+        var arr = [0, 1, 2];
         var result = 0;
-        if (n < 4) {
-            return arr[n-1]
+        var _n = parseInt(n);
+        if (_n < 3) {
+            return parseInt(createTime) + arr[_n] * 1000 * 60 * 60 * 24
         }
-        while (n > 3) {
+        while (_n > 2) {
             a = arr[arr.length - 1] + arr[arr.length - 2];
             arr.push(a);
-            n--
+            _n--
         }
-        return createTime + a*1000*60*60*24;
+        return parseInt(createTime) + a * 1000 * 60 * 60 * 24;
     }
+
+    //  POST 请求 获取今日复习计划列表
+    app.get('/api/getTodayList', function (req, res) {
+        fs.readFile(baseurl + "lesson/config.json", function (err, data) {
+            if (err) return console.log(err);
+            try {
+                data = JSON.parse(data.toString());
+                var todaylist = []
+                for (var i = 0; i < data.config.dir.length; i++) {
+                    var list = fs.readFileSync(baseurl + "lesson/" + data.config.dir[i].name + "/chapterConfig.json");
+                    var todayItem = {
+                        name: data.config.dir[i].name,
+                        id: data.config.dir[i].id,
+                        list: JSON.parse(list.toString()).config.todaylist.splice(0, 4)
+                    };
+                    todaylist.push(todayItem);
+                }
+                res.send(todaylist);
+            } catch {
+                res.send({
+                    msg: "服务器错误"
+                })
+            }
+        })
+
+    })
 
     var server = app.listen(8081, function () {
 
         var host = server.address().address
         var port = server.address().port
         computeWeight()
-        setInterval(computeWeight,60000)
+        setInterval(computeWeight, 60000)
         console.log("应用实例，访问地址为 http://" + host + ":" + port)
 
     })
