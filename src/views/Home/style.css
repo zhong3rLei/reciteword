@@ -1,0 +1,77 @@
+.home{
+    display: flex;
+    padding: 10px;
+    height: 100%;
+    box-sizing: border-box;
+}
+.mission_box{
+    flex: 0 300px;
+    height: 100%;
+    padding-top: 40px;
+    box-sizing: border-box;
+}
+.mission_box h2{
+    height: 40px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 15px;
+    line-height: 40px;
+    background: url(../../assets/image/mission_icon.svg) no-repeat 5px center;
+    background-size: auto 50%;
+    padding-left: 30px;
+}
+.recommend_list{
+    background-color: white;
+    border-radius: 5px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: auto;
+}
+.recommend_list h3{
+    margin: 0;
+    font-size: 13px;
+    font-weight: normal;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-left: 5px solid #ff8800;
+}
+.recommend_list .lesson_item{
+    font-size: 12px;
+    background: url(../../assets/image/lesson_icon.svg) no-repeat 20px center;
+    background-size: 18px auto;
+    padding: 10px 150px 10px 50px;
+    position: relative;
+}
+.recommend_list .lesson_item .control{
+    position: absolute;
+    right: 0;
+    top:0;
+    height: 100%;
+    width: 140px;
+    padding-top: 6px;
+}
+.recommend_list .lesson_item .control .btn{
+    float: left;
+    padding: 5px 10px;
+    background-color: #0692d0;
+    color: white;
+    border-radius: 3px;
+    margin-left: 5px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all .2s;
+}
+.recommend_list .lesson_item .control .btn:hover{
+    opacity: .8 !important;
+}
+.recommend_list .lesson_item:hover .control .btn{
+    opacity: 1;
+    transform: scale(1);
+}

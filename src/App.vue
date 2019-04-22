@@ -35,7 +35,7 @@ export default {
     }
   },
   mounted () {
-    
+
   }
 };
 </script>
@@ -47,10 +47,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-body,html{
-  margin: 0;
-  padding: 0;
-}
+
 header{
   height: 40px;
   position: absolute;
@@ -82,5 +79,6 @@ nav span.active{
   right: 0;
   bottom: 0;
   top: 40px;
+  background-color: #f0f0f0;
 }
 </style>

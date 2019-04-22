@@ -26,7 +26,7 @@ export default {
       }
       return bol;
     },
-    toLesson(item) {
+    toLesson(item,call) {
       var _vm = this;
       if (this.left_edit || item.single_edit) return;
       if (!item.single_edit && this.isSingleEdit()) {
@@ -40,6 +40,7 @@ export default {
           _vm.left_list = res.data;
           _vm.sub_nav.push(item);
           _vm.checkTo('chapter');
+          call && call();
         })
       } else if (this.left_location == 'chapter') {
         this.weightCommit();
@@ -57,6 +58,7 @@ export default {
           };
           _vm.sub_nav.push(item)
           _vm.right_location = "letter"
+          call && call();
         })
       }
     },
@@ -126,6 +128,7 @@ export default {
   },
   mounted() {
     var _vm = this;
+    console.log(this.$router)
     this.axios.post('/api/getSubjectList').then(res => {
       console.log(res)
       var _data = [];
@@ -138,6 +141,20 @@ export default {
       }
       _vm.left_list = _data;
       _vm.$store.commit("setSubjectList", _data);
+      if (_vm.$router.history.current.query.chpterId) {
+        for (var i = 0; i < _vm.left_list.length; i++) {
+          if (_vm.left_list[i].id == _vm.$router.history.current.query.chpterId) {
+            _vm.toLesson(_vm.left_list[i], function () {
+              for (var j = 0; j < _vm.left_list.length; j++) {
+                if (_vm.left_list[j].id == _vm.$router.history.current.query.lessonId) {
+                  _vm.toLesson(_vm.left_list[j]);
+                }
+              }
+            })
+            break;
+          }
+        }
+      }
     })
     timmer = setInterval(_vm.weightCommit, 20000)
   },

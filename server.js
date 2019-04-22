@@ -634,11 +634,7 @@ module.exports = function (electron) {
             //计算今日智能推荐复习计划列表
             var _todayList = [];
             for (var x = 0; x < chapterItem.config.dir.length; x++) {
-                var _rvTime = reviewTime(chapterItem.config.dir[x].createtime, chapterItem.config.dir[x].reviewcount);
-                console.log("----------------------------")
-                console.log(parseInt(_rvTime / (1000 * 60 * 60 * 24)))
-                console.log(parseInt(new Date().getTime() / (1000 * 60 * 60 * 24)))
-                console.log("----------------------------")
+                var _rvTime = reviewTime(chapterItem.config.dir[x].createtime, chapterItem.config.dir[x].reviewcount);               
                 if (parseInt(_rvTime / (1000 * 60 * 60 * 24)) <= parseInt(new Date().getTime() / (1000 * 60 * 60 * 24))) {
                     var _missday = parseInt(new Date().getTime() / (1000 * 60 * 60 * 24)) - parseInt(_rvTime / (1000 * 60 * 60 * 24));
                     var _item = chapterItem.config.dir[x];
@@ -646,6 +642,14 @@ module.exports = function (electron) {
                     _todayList.push(_item);
                 }
             }
+            _todayList.sort(function (a,b) {
+                if ((a.missday+1-a.averageScore)-(b.missday+1-b.averageScore) > 0) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+                return 0;
+            })
             chapterItem.config.todaylist = _todayList;
             fs.writeFileSync(baseurl + "lesson/" + chapterDir[i].name + "/chapterConfig.json", JSON.stringify(chapterItem));
         }

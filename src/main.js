@@ -6,6 +6,7 @@ import './registerServiceWorker'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import whscroll from './components/wh-scroll/'
+import "./assets/css/common.css"
 
 Vue.use(VueAxios,axios);
 Vue.use(whscroll)
