@@ -235,7 +235,8 @@ module.exports = function (electron) {
                             var _newId = createRandomId("chapter");
                             _data.config.dir.push({
                                 name: dataObject.name,
-                                id: _newId
+                                id: _newId,
+                                createtime: new Date().getTime()
                             })
                             _data.config.total = _data.config.dir.length;
                             fs.writeFile(baseurl + 'lesson/' + chapterName + '/chapterConfig.json', JSON.stringify(_data), function (err) {
@@ -321,10 +322,7 @@ module.exports = function (electron) {
                 var msgFlag = false;
                 var _newConfig = [];
                 for (var i = 0; i < dataObject.dataList.length; i++) {
-                    _newConfig.push({
-                        id: dataObject.dataList[i].id,
-                        name: dataObject.dataList[i].name
-                    })
+                    _newConfig.push(dataObject.dataList[i])
                     for (var j = 0; j < _data.config.dir.length; j++) {
                         if (dataObject.dataList[i].id == _data.config.dir[j].id && dataObject.dataList[i].name != _data.config.dir[j].name) {
                             fs.renameSync(baseurl + "lesson/" + chapterName + "/" + _data.config.dir[j].name + ".json", baseurl + "lesson/" + chapterName + "/" + dataObject.dataList[i].name + ".json");
@@ -618,6 +616,7 @@ module.exports = function (electron) {
                 }
                 //计算平均分,存到课节的config文件
                 lessonDir[j].averageScore = totalscore ? (1 - misscore / totalscore).toFixed(2) : "0";
+                lessonDir[j].createtime = new Date().getTime();
                 var weightPercentTotal = 0;
                 for (var y = 0; y < letterDir.length; y++) {
                     //逐个计算权重占比
