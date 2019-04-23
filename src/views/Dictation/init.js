@@ -24,7 +24,7 @@ export default {
       }
       return bol;
     },
-    toLesson(item) {
+    toLesson(item, call) {
       var _vm = this;
       if (this.left_edit || item.single_edit) return;
       if (!item.single_edit && this.isSingleEdit()) {
@@ -38,6 +38,7 @@ export default {
           _vm.left_list = res.data;
           _vm.sub_nav.push(item);
           _vm.checkTo('chapter');
+          call && call();
         })
       } else if (this.left_location == 'chapter') {
         this.axios.post('/api/getLetter', {
@@ -54,6 +55,7 @@ export default {
           };
           _vm.sub_nav.push(item)
           _vm.right_location = "letter"
+          call && call();
         })
       }
     },
@@ -99,6 +101,7 @@ export default {
           subdirid: _vm.sub_nav[0].id,
           lessonid: _vm.sub_nav[1].id,
           dataList: _vm.right_list,
+          fromrecommond: _vm.$route.params.lessonId ? true : false
         }).then(res => {
           _vm.$refs.wrapper.showScore(res.data.data)
         })
@@ -120,6 +123,20 @@ export default {
       }
       _vm.left_list = _data;
       _vm.$store.commit("setSubjectList", _data);
+      if (_vm.$route.params.chpterId) {
+        for (var i = 0; i < _vm.left_list.length; i++) {
+          if (_vm.left_list[i].id == _vm.$route.params.chpterId) {
+            _vm.toLesson(_vm.left_list[i], function () {
+              for (var j = 0; j < _vm.left_list.length; j++) {
+                if (_vm.left_list[j].id == _vm.$route.params.lessonId) {
+                  _vm.toLesson(_vm.left_list[j]);
+                }
+              }
+            })
+            break;
+          }
+        }
+      }
     })
 
   }

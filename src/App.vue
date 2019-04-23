@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <header>
+      <div class="logo" @click="$router.push('/')"></div>
       <nav>
         <span @click="check(0)" :class="{active: navIndex == 0}">录入词库</span>
         <span @click="check(1)" :class="{active: navIndex == 1}">单词复习</span>
@@ -80,5 +81,16 @@ nav span.active{
   bottom: 0;
   top: 40px;
   background-color: #f0f0f0;
+}
+.logo{
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  background: url(./assets/image/logo.svg) no-repeat center #fdd469;
+  background-size: 70%;
+  position: relative;
+  top: 5px;
+  left: 5px;
+  float: left;
 }
 </style>

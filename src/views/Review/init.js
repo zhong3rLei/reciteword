@@ -103,7 +103,7 @@ export default {
     weightCommit () {
       var _vm = this;
       if (!_vm.sub_nav[1] || this.right_list == []) return;
-      var dataList = this.right_list
+      var dataList = JSON.parse(JSON.stringify(this.right_list))
       for (var i = 0; i < dataList.length; i++) {
         delete dataList[i].rotate;
       }
@@ -128,7 +128,7 @@ export default {
   },
   mounted() {
     var _vm = this;
-    console.log(this.$router)
+    console.log(this.$route)
     this.axios.post('/api/getSubjectList').then(res => {
       console.log(res)
       var _data = [];
@@ -141,12 +141,12 @@ export default {
       }
       _vm.left_list = _data;
       _vm.$store.commit("setSubjectList", _data);
-      if (_vm.$router.history.current.query.chpterId) {
+      if (_vm.$route.params.chpterId) {
         for (var i = 0; i < _vm.left_list.length; i++) {
-          if (_vm.left_list[i].id == _vm.$router.history.current.query.chpterId) {
+          if (_vm.left_list[i].id == _vm.$route.params.chpterId) {
             _vm.toLesson(_vm.left_list[i], function () {
               for (var j = 0; j < _vm.left_list.length; j++) {
-                if (_vm.left_list[j].id == _vm.$router.history.current.query.lessonId) {
+                if (_vm.left_list[j].id == _vm.$route.params.lessonId) {
                   _vm.toLesson(_vm.left_list[j]);
                 }
               }

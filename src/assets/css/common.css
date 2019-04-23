@@ -4,3 +4,6 @@ body,html{
     user-select: none;
     overflow: hidden;
   }
+input{
+  font-family: "microsoft yahei";
+}

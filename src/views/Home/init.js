@@ -8,10 +8,10 @@ export default {
     },
     methods: {
       toReview (item,lesson) {
-        this.$router.push({ path: '/review', query: { chpterId: item.id, lessonId: lesson.id }})
+        this.$router.push({ name: 'review', params: { chpterId: item.id, lessonId: lesson.id }})
       },
       toDictation (item,lesson) {
-        this.$router.push({ path: '/dictation', query: { chpterId: item.id, lessonId: lesson.id }})
+        this.$router.push({ name: 'dictation', params: { chpterId: item.id, lessonId: lesson.id }})
       }
     },
     mounted () {

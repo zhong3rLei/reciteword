@@ -236,7 +236,8 @@ module.exports = function (electron) {
                             _data.config.dir.push({
                                 name: dataObject.name,
                                 id: _newId,
-                                createtime: new Date().getTime()
+                                createtime: new Date().getTime(),
+                                reviewcount: 0
                             })
                             _data.config.total = _data.config.dir.length;
                             fs.writeFile(baseurl + 'lesson/' + chapterName + '/chapterConfig.json', JSON.stringify(_data), function (err) {
@@ -506,12 +507,17 @@ module.exports = function (electron) {
             var chapterName = getChapterName(dataObject.subdirid);
             fs.readFile(baseurl + "lesson/" + chapterName + "/chapterConfig.json", function (err, data) {
                 var _data = JSON.parse(data.toString());
+                
                 var _newLesson;
                 for (var i = 0; i < _data.config.dir.length; i++) {
                     if (_data.config.dir[i].id == dataObject.lessonid) {
                         _newLesson = _data.config.dir[i].name;
+                        if(dataObject.fromrecommond) {
+                            _data.config.dir[i].reviewcount += 1;
+                        }
                     }
                 }
+                fs.writeFileSync(baseurl + "lesson/" + chapterName + "/chapterConfig.json", JSON.stringify(_data));
                 fs.readFile(baseurl + "lesson/" + chapterName + "/" + _newLesson + ".json", function (err, data) {
                     if (err) return;
 
@@ -616,7 +622,8 @@ module.exports = function (electron) {
                 }
                 //计算平均分,存到课节的config文件
                 lessonDir[j].averageScore = totalscore ? (1 - misscore / totalscore).toFixed(2) : "0";
-                lessonDir[j].createtime = new Date().getTime();
+                // lessonDir[j].createtime = new Date().getTime();
+                // lessonDir[j].reviewcount = 0;
                 var weightPercentTotal = 0;
                 for (var y = 0; y < letterDir.length; y++) {
                     //逐个计算权重占比
