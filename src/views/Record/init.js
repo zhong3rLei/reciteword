@@ -82,14 +82,16 @@ export default {
           name: item.name
         }).then(res => {
           console.log(res)
-          item.id = res.data.data.id;
-          _vm.axios.post('/api/changeChapter', {
-            subdirid: _vm.sub_nav[0].id,
-            dataList: _vm.left_list
-          }).then(res => {
-            console.log(res)
-            _vm.drag = false
-          })
+          item = res.data.data;
+          if (_vm.drag) {
+            _vm.axios.post('/api/changeChapter', {
+              subdirid: _vm.sub_nav[0].id,
+              dataList: _vm.left_list
+            }).then(res => {
+              console.log(res)
+              _vm.drag = false
+            })
+          }
         })
       }
     },
@@ -235,7 +237,7 @@ export default {
             en: _vm.right_list[x].en,
             ch: _vm.right_list[x].ch
           }).then(res => {
-            
+
           })
         }
       }
@@ -250,7 +252,7 @@ export default {
           en: item.en,
           ch: item.ch
         }).then(res => {
-          
+
         })
       }
     },
@@ -276,7 +278,7 @@ export default {
         _vm.letterCancel();
       })
     },
-    delLetter (item, index) {
+    delLetter(item, index) {
       var _vm = this;
       this.axios.post('/api/delLetter', {
         subdirid: _vm.sub_nav[0].id,
