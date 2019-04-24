@@ -761,7 +761,7 @@ module.exports = function (electron) {
         var host = server.address().address
         var port = server.address().port
         computeWeight()
-        setInterval(computeWeight, 60000)
+        // setInterval(computeWeight, 60000)
         console.log("应用实例，访问地址为 http://" + host + ":" + port)
 
     })
